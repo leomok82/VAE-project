@@ -35,6 +35,37 @@ def create_dataloader(path, batch_size, mode='train'):
     data_loader = DataLoader(dataset=dataset, batch_size=batch_size, shuffle=(mode != 'val'))  # noqa
     return data_loader
 
+
+def Reshape(split_size, sequence_length, train_data, test_data):
+    w =train_data.shape[1]
+    h=train_data.shape[2]
+    assert train_data.shape[2]==test_data.shape[2]
+    assert train_data.shape[1]==test_data.shape[1]
+
+    train_4d=train_data.reshape(train_data.shape[0]//sequence_length,sequence_length,w,h)[:,::split_size,:,:][:,:-1,:,:]
+    train2_4d=train_data.reshape(train_data.shape[0]//sequence_length,sequence_length,w,h)[:,::split_size,:,:][:,:-1,:,:]
+    train_shift_4d=train_data.reshape(train_data.shape[0]//sequence_length,sequence_length,w,h)[:,::split_size,:,:][:,1:,:,:]
+
+    test_4d = test_data.reshape(test_data.shape[0]//sequence_length,sequence_length,w,h)[:,::split_size,:,:][:,:-1,:,:]
+    test_shift_4d= test_data.reshape(test_data.shape[0]//sequence_length,sequence_length,w,h)[:,::split_size,:,:][:,1:,:,:]
+    assert (train_shift_4d[0][1].all() ==train_4d[0][2].all())
+    assert (test_shift_4d[0][1].all() == test_4d[0][2].all())
+
+    return train_4d,test_4d
+
+
+def DataLoading(train_4d, test_4d):
+    trainloader = torch.utils.data.DataLoader(torch.tensor(train_4d,dtype=torch.float32),batch_size=16, shuffle = False)
+    trainshiftloader = torch.utils.data.DataLoader(torch.tensor(train_4d,dtype=torch.float32),batch_size=16, shuffle = False)
+    testloader = torch.utils.data.DataLoader(torch.tensor(test_4d,dtype=torch.float32),batch_size=16, shuffle = False)
+    testshiftloader = torch.utils.data.DataLoader(torch.tensor(test_4d,dtype=torch.float32),batch_size=16, shuffle = False)
+
+    return trainloader, trainshiftloader, testloader, testshiftloader
+
+
+
+
+
 def loss_function(x, x_hat, mu, logvar):
     # Flatten the input and output for binary cross-entropy loss calculation
     x = x.view(-1, x.size(1) * x.size(2) * x.size(3) * x.size(4))
