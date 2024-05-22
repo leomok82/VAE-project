@@ -1,39 +1,53 @@
 import numpy as np
 import torch
-from torch.utils.data import DataLoader, TensorDataset
-from livelossplot import PlotLosses
+from torch.utils.data import DataLoader, Dataset
 import torch.nn.functional as F
 import torch.nn as nn
-import matplotlib.pyplot as plt
-import pickle
 
-def split(arr, split_size):
-    L = len(arr)
-    num_splits = L // split_size
-    remainder = L % split_size
-    splits = np.split(arr[:L-remainder], num_splits)
-    if remainder != 0:
-        splits.append(arr[L-remainder:])
-    return splits
+def create_split(data, seq_length, split_size):
+    dim = data.shape[1]
+    nb_seq = data.shape[0] // seq_length
+    data_4d = data.reshape(nb_seq, seq_length, dim, dim)[:,::split_size,:,:]
+    return data_4d
 
+def create_shifted_sequences(data, seq_length, split_size):
+    split_data = create_split(data, seq_length, split_size)
 
-def create_pairs(data, split_size):
-    x = split(data, split_size)
-    y = split(data, split_size)
-    for i in range(len(x)):
-        x[i] = x[i][:-1]
-        y[i] = y[i][1:]
-    x, y = np.array(x), np.array(y)
-    return np.concatenate(x), np.concatenate(y)
+    input_seq = split_data[:, :-1, :, :]
+    target_seq = split_data[:, 1:, :, :]
 
+    return input_seq, target_seq
 
-def create_dataloader(path, batch_size, mode='train'):
-    data = np.array(np.load(open(path, 'rb')))
-    data_x, data_y = create_pairs(data, 100)
-    tensor_x, tensor_y = torch.Tensor(data_x), torch.Tensor(data_y)
-    dataset = TensorDataset(tensor_x, tensor_y)
-    data_loader = DataLoader(dataset=dataset, batch_size=batch_size, shuffle=(mode != 'val'))  # noqa
-    return data_loader
+class WildfiresObjective2(Dataset):
+    def __init__(self, data, seq_length, split_size):
+        self.seq_length = seq_length
+        self.split_size = split_size
+        self.input_seq, self.target_seq = create_shifted_sequences(data, seq_length, split_size)
+
+    def __len__(self):
+        return len(self.input_seq), len(self.target_seq)
+
+    def __getitem__(self, idx):
+        return self.input_seq[idx], self.target_seq[idx]
+
+def create_dataloaders(train_data, test_data, seq_length, split_size, batch_size):
+
+    # Create datasets
+    train_dataset = WildfiresObjective2(train_data, seq_length, split_size)
+    train_input_seq = train_dataset.input_seq
+    train_target_seq = train_dataset.target_seq
+
+    test_set = WildfiresObjective2(test_data, seq_length, split_size)
+    test_input_seq = test_set.input_seq
+    test_target_seq = test_set.target_seq
+    
+    # Create dataloaders
+    train_loader = DataLoader(torch.tensor(train_input_seq,dtype=torch.float32), batch_size=batch_size, shuffle=False)
+    train_shifted_loader = DataLoader(torch.tensor(train_target_seq,dtype=torch.float32), batch_size=batch_size, shuffle=False)
+    test_loader = DataLoader(torch.tensor(test_input_seq,dtype=torch.float32), batch_size=batch_size, shuffle=False)
+    test_shifted_loader = DataLoader(torch.tensor(test_target_seq,dtype=torch.float32), batch_size=batch_size, shuffle=False)
+    
+    return train_loader, train_shifted_loader, test_loader, test_shifted_loader
 
 def loss_function(x, x_hat, mu, logvar):
     # Flatten the input and output for binary cross-entropy loss calculation
@@ -41,87 +55,42 @@ def loss_function(x, x_hat, mu, logvar):
     x_hat = x_hat.view(-1, x_hat.size(1) * x_hat.size(2) * x_hat.size(3) * x_hat.size(4))
     
     # MSE loss
-    # reproduction_loss = mseloss(x_hat, x)#, reduction='mean')
-    reproduction_loss = nn.MSELoss(x_hat, x, reduction='mean')
+    mse_loss = nn.MSELoss(reduction='mean')
+    reproduction_loss = mse_loss(x_hat, x)
     
     # KL divergence loss
     KLD = -0.5 * torch.sum(1 + logvar - mu.pow(2) - logvar.exp())
     
     return reproduction_loss + KLD
 
-def train_model(model, dataloader, testloader, num_epochs, lr = 0.0001, criterion = loss_function,  t = 99, device = 'cpu', scheduler = 0):
-    mus= []
-    sigmas = []
+def train(model, data_loader, data_shifted_loader, lr = 0.0001, criterion = loss_function,  t = 19, device = 'cpu', scheduler = 0):
     optimizer = torch.optim.Adam(model.parameters(), lr=lr)
+    model.train()
+    train_loss = 0
+    for X, Y in zip(data_loader, data_shifted_loader):
+        X = X.to(device).view(-1,1,t,256,256)
+        Y = Y.to(device).view(-1,1,t,256,256)
+        optimizer.zero_grad()
+        a2, mu, logvar =model(X)
+        loss = criterion(Y, a2, mu, logvar)
+        loss.backward()
+        train_loss += loss*X.size(0)
+        optimizer.step()
+        if scheduler !=0:
+            scheduler.step()
+    train_loss /= len(data_loader.dataset)
+    return train_loss
 
-    train_losses = []
-    val_losses = []
-    plot_losses = PlotLosses()
-
-    for epoch in range(num_epochs):
-        # Training loop for the model
-        model.train()
-        train_loss = 0
-        for X, Y in zip(dataloader, testloader):
+def validate(model, data_loader, data_shifted_loader, criterion = loss_function,  t = 19, device = 'cpu'):
+    model.eval()
+    valid_loss = 0
+    with torch.no_grad():
+        for X, Y in zip(data_loader, data_shifted_loader):
             X = X.to(device).view(-1,1,t,256,256)
             Y = Y.to(device).view(-1,1,t,256,256)
-            optimizer.zero_grad()
-            a2, mu, logvar =model(X)
+            a2, mu, logvar = model(X)
             loss = criterion(Y, a2, mu, logvar)
-
-            mus.append(mu)
-            sigmas.append(logvar)
-
-            loss.backward()
-            train_loss += loss*X.size(0)
-            optimizer.step()
-            if scheduler !=0:
-                scheduler.step()
-
-        train_loss /= len(dataloader.dataset)
-        train_losses.append(train_loss)
+            valid_loss += loss*X.size(0)
         
-        # Validation loop for the model
-        model.eval()
-        valid_loss = 0
-        with torch.no_grad():
-            for X, Y in zip(dataloader, testloader):
-                X = X.to(device).view(-1,1,t,256,256)
-                Y = Y.to(device).view(-1,1,t,256,256)
-                a2, mu, logvar =model(X)
-                loss = criterion(Y, a2, mu, logvar)
-                valid_loss += loss*X.size(0)
-            
-            valid_loss /= len(testloader.dataset)
-            val_losses.append(valid_loss)
-        
-        # Update the live loss plot
-        plot_losses.update({
-            'loss': train_loss,
-            'val_loss': valid_loss
-        })
-        plot_losses.send()
-
-        print(f'Epoch [{epoch+1}/{num_epochs}], Train Loss: {train_loss:.4f}, Val Loss: {valid_loss:.4f}')
-
-    # Save plot losses figure
-    plot_filename = f'loss_plot_{num_epochs}.png'
-    # Plot the losses using matplotlib
-    plt.figure()
-    plt.plot(range(1, num_epochs + 1), train_losses, label='Train Loss')
-    plt.plot(range(1, num_epochs + 1), val_losses, label='Validation Loss')
-    plt.xlabel('Epoch')
-    plt.ylabel('Loss')
-    plt.legend()
-    plt.title(f'Training and Validation Loss')
-    plt.savefig(plot_filename)
-    plt.close()
-
-    # Save the model and execution time
-    model_info = {'model': model.state_dict(), 
-                  'plot_losses':plot_filename}
-    
-    model_filename = f'VAE_{num_epochs}ep.pkl'
-    with open(model_filename, 'wb') as f:
-        pickle.dump(model_info, f)
-    print(f"Model saved to {model_filename}")
+        valid_loss /= len(data_loader.dataset)
+    return valid_loss
