@@ -68,8 +68,8 @@ def DataLoading(train_4d, test_4d):
     return trainloader, testloader
 
 def loss_function(x, x_hat, mu, logvar):
-    x = x.view(-1, x.size(1) * x.size(2) * x.size(3) * x.size(4))
-    x_hat = x_hat.view(-1, x_hat.size(1) * x_hat.size(2) * x_hat.size(3) * x_hat.size(4))
+    # x = x.view(-1, x.size(1) * x.size(2) * x.size(3) * x.size(4))
+    # x_hat = x_hat.view(-1, x_hat.size(1) * x_hat.size(2) * x_hat.size(3) * x_hat.size(4))
     
     mse_loss = nn.MSELoss(reduction='mean')
     reproduction_loss = mse_loss(x_hat, x)
@@ -83,8 +83,8 @@ def train(model, data_loader, data_shifted_loader, lr=0.0001, criterion=loss_fun
     model.train()
     train_loss = 0
     for X, Y in zip(data_loader, data_shifted_loader):
-        X = X.to(device).view(-1,1,t,256,256)
-        Y = Y.to(device).view(-1,1,t,256,256)
+        X = X.to(device)#.view(-1,1,t,256,256)
+        Y = Y.to(device)#.view(-1,1,t,256,256)
         optimizer.zero_grad()
         a2, mu, logvar = model(X)
         loss = criterion(Y, a2, mu, logvar)

@@ -2,9 +2,14 @@ import torch
 import torch.nn as nn
 
 
+
+
 class VAE(nn.Module):
     def __init__(self, latent_dim=64, channel_size=19, image_size=256):
         super(VAE, self).__init__()
+        self.channel_size = channel_size
+        self.latent_dim = latent_dim
+        self.image_size = image_size
         self.encoder = nn.Sequential(
             nn.Flatten(),
             nn.Linear(channel_size * image_size * image_size, 256),
@@ -43,7 +48,7 @@ class VAE(nn.Module):
 
     def decode(self, z):
         x_hat = self.decoder(z)
-        return x_hat.view(-1, channel_size, image_size, image_size)
+        return x_hat.view(-1, self.channel_size, self.image_size, self.image_size)
 
     def forward(self, x):
         mu, logvar = self.encode(x)

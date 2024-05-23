@@ -5,7 +5,7 @@ import matplotlib.pyplot as plt
 def predict_samples(model, n_samples, latent_dim, device='cpu'):
     with torch.no_grad():
         nums = torch.randn(n_samples, latent_dim).to(device)
-        samples = model.decode(nums).cpu().detach().numpy()
+        samples = model.decoder(nums).cpu().detach().numpy()
     return samples
 
 def display_samples(samples, channel_size, n_rows=9, n_cols=1):
