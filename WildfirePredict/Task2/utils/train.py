@@ -34,13 +34,20 @@ def create_dataloaders(train_data, test_data, seq_length, split_size, batch_size
 
     # Create datasets
     train_dataset = WildfiresObjective2(train_data, seq_length, split_size)
+    train_input_seq = train_dataset.input_seq
+    train_target_seq = train_dataset.target_seq
+
     test_set = WildfiresObjective2(test_data, seq_length, split_size)
+    test_input_seq = test_set.input_seq
+    test_target_seq = test_set.target_seq
     
     # Create dataloaders
-    train_loader = DataLoader(train_dataset, batch_size=batch_size, shuffle=False)
-    test_loader = DataLoader(test_set, batch_size=batch_size, shuffle=False)
+    train_loader = DataLoader(torch.tensor(train_input_seq,dtype=torch.float32), batch_size=batch_size, shuffle=False)
+    train_shifted_loader = DataLoader(torch.tensor(train_target_seq,dtype=torch.float32), batch_size=batch_size, shuffle=False)
+    test_loader = DataLoader(torch.tensor(test_input_seq,dtype=torch.float32), batch_size=batch_size, shuffle=False)
+    test_shifted_loader = DataLoader(torch.tensor(test_target_seq,dtype=torch.float32), batch_size=batch_size, shuffle=False)
     
-    return train_loader, test_loader
+    return train_loader, train_shifted_loader, test_loader, test_shifted_loader
 
 def Reshape(split_size, sequence_length, train_data, test_data):
     w = train_data.shape[1]
