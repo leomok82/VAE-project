@@ -1,15 +1,15 @@
 import pytest
 import numpy as np
 import sys
-from models.CAEmodel import CAE
-import task2functions.assimilate as assimilate
+# Set the path to the parent directory to import the modules
+sys.path.append('WildfireDA')
 
-# Adjust the path to include the parent directory of task2functions
-sys.path.append('WildfirePredict/Task2')
+from task3functions import assimilate
+from models import CAE
 
-# @pytest.fixture
-# def model():
-#     return CAE()
+@pytest.fixture
+def model():
+    return CAE()
 
 @pytest.fixture
 def obs_data():

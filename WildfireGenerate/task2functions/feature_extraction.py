@@ -2,6 +2,8 @@ import numpy as np
 from sklearn.decomposition import PCA
 from sklearn.preprocessing import StandardScaler
 
+__all__ = ['extract_features', 'compute_pca']
+
 def extract_features(images1, images2, mse_func, cos_sim_func, psnr_func):
     features = []
     for img1 in images1:
