@@ -127,7 +127,7 @@ class ConvLSTM(nn.Module):
         return param
 
 class ConvLSTMModel(nn.Module):
-    def __init__(self, input_dim, hidden_dim, kernel_size, num_layers, output_dim):
+    def __init__(self, input_dim=1, hidden_dim=[32, 32], kernel_size=(3, 3), num_layers=2, output_dim=1):
         super(ConvLSTMModel, self).__init__()
         self.convlstm = ConvLSTM(input_dim, hidden_dim, kernel_size, num_layers, batch_first=True, return_all_layers=False)
         self.conv = nn.Conv2d(hidden_dim[-1], output_dim, kernel_size=1, padding=0)

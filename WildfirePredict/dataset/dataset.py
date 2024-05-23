@@ -3,7 +3,7 @@ import torch
 from torch.utils.data import Dataset
 
 class WildfireDataset(Dataset):
-    def __init__(self, data, window_size, step_size):
+    def __init__(self, data, window_size=5, step_size=5):
         """
         Args:
             data (numpy.ndarray): Input dataset with shape (num_sequences, seq_length, 1, height, width).

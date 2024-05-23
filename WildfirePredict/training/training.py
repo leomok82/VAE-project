@@ -6,7 +6,7 @@ from torch.utils.data import DataLoader
 from tqdm import tqdm
 from livelossplot import PlotLosses
 
-from WildfirePredict.model.model import ConvLSTMModel
+from WildfirePredict.model import ConvLSTMModel
 
 class WildfireTrainer:
     def __init__(self, model, train_loader, val_loader, test_loader, device, criterion, optimizer, num_epochs=20):
