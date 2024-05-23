@@ -2,9 +2,9 @@ name: Python application
 
 on:
   push:
-    branches: [ task1-reid ]
+    branches: [ development ]
   pull_request:
-    branches: [ task1-reid ]
+    branches: [ development ]
 
 jobs:
   build:
@@ -36,3 +36,5 @@ jobs:
     - name: Run tests
       run: |
         pytest WildfirePredict/tests
+        pytest WildfireGenerate/tests
+        pytest WildfireDA/tests
