@@ -1,5 +1,5 @@
 import numpy as np
-from metrics import mse, psnr, cosine_sim
+from WildfirePredict.Task2.chosing_images.metrics import mse, psnr, cosine_sim
 
 def combined_similarity_score(gen_image, obs_image, w1=0.48, w2=0.04, w3=0.48):
     mse_score = mse(gen_image, obs_image)

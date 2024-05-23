@@ -25,7 +25,7 @@ class WildfiresObjective2(Dataset):
         self.input_seq, self.target_seq = create_shifted_sequences(data, seq_length, split_size)
 
     def __len__(self):
-        return len(self.input_seq), len(self.target_seq)
+        return len(self.input_seq)
 
     def __getitem__(self, idx):
         return self.input_seq[idx], self.target_seq[idx]
@@ -34,67 +34,44 @@ def create_dataloaders(train_data, test_data, seq_length, split_size, batch_size
 
     # Create datasets
     train_dataset = WildfiresObjective2(train_data, seq_length, split_size)
-    train_input_seq = train_dataset.input_seq
-    train_target_seq = train_dataset.target_seq
-
     test_set = WildfiresObjective2(test_data, seq_length, split_size)
-    test_input_seq = test_set.input_seq
-    test_target_seq = test_set.target_seq
     
     # Create dataloaders
-    train_loader = DataLoader(torch.tensor(train_input_seq,dtype=torch.float32), batch_size=batch_size, shuffle=False)
-    train_shifted_loader = DataLoader(torch.tensor(train_target_seq,dtype=torch.float32), batch_size=batch_size, shuffle=False)
-    test_loader = DataLoader(torch.tensor(test_input_seq,dtype=torch.float32), batch_size=batch_size, shuffle=False)
-    test_shifted_loader = DataLoader(torch.tensor(test_target_seq,dtype=torch.float32), batch_size=batch_size, shuffle=False)
+    train_loader = DataLoader(train_dataset, batch_size=batch_size, shuffle=False)
+    test_loader = DataLoader(test_set, batch_size=batch_size, shuffle=False)
     
-    return train_loader, train_shifted_loader, test_loader, test_shifted_loader
-
+    return train_loader, test_loader
 
 def Reshape(split_size, sequence_length, train_data, test_data):
-    w =train_data.shape[1]
-    h=train_data.shape[2]
-    assert train_data.shape[2]==test_data.shape[2]
-    assert train_data.shape[1]==test_data.shape[1]
+    w = train_data.shape[1]
+    h = train_data.shape[2]
+    
+    train_4d = train_data.reshape(train_data.shape[0]//sequence_length, sequence_length, w, h)[:,::split_size,:,:][:,:-1,:,:]
+    train_shift_4d = train_data.reshape(train_data.shape[0]//sequence_length, sequence_length, w, h)[:,::split_size,:,:][:,1:,:,:]
 
-    train_4d=train_data.reshape(train_data.shape[0]//sequence_length,sequence_length,w,h)[:,::split_size,:,:][:,:-1,:,:]
-    train2_4d=train_data.reshape(train_data.shape[0]//sequence_length,sequence_length,w,h)[:,::split_size,:,:][:,:-1,:,:]
-    train_shift_4d=train_data.reshape(train_data.shape[0]//sequence_length,sequence_length,w,h)[:,::split_size,:,:][:,1:,:,:]
+    test_4d = test_data.reshape(test_data.shape[0]//sequence_length, sequence_length, w, h)[:,::split_size,:,:][:,:-1,:,:]
+    test_shift_4d = test_data.reshape(test_data.shape[0]//sequence_length, sequence_length, w, h)[:,::split_size,:,:][:,1:,:,:]
 
-    test_4d = test_data.reshape(test_data.shape[0]//sequence_length,sequence_length,w,h)[:,::split_size,:,:][:,:-1,:,:]
-    test_shift_4d= test_data.reshape(test_data.shape[0]//sequence_length,sequence_length,w,h)[:,::split_size,:,:][:,1:,:,:]
-    assert (train_shift_4d[0][1].all() ==train_4d[0][2].all())
-    assert (test_shift_4d[0][1].all() == test_4d[0][2].all())
-
-    return train_4d,test_4d
-
+    return train_4d, test_4d
 
 def DataLoading(train_4d, test_4d):
-    trainloader = torch.utils.data.DataLoader(torch.tensor(train_4d,dtype=torch.float32),batch_size=16, shuffle = False)
-    trainshiftloader = torch.utils.data.DataLoader(torch.tensor(train_4d,dtype=torch.float32),batch_size=16, shuffle = False)
-    testloader = torch.utils.data.DataLoader(torch.tensor(test_4d,dtype=torch.float32),batch_size=16, shuffle = False)
-    testshiftloader = torch.utils.data.DataLoader(torch.tensor(test_4d,dtype=torch.float32),batch_size=16, shuffle = False)
+    trainloader = torch.utils.data.DataLoader(torch.tensor(train_4d,dtype=torch.float32), batch_size=16, shuffle=False)
+    testloader = torch.utils.data.DataLoader(torch.tensor(test_4d,dtype=torch.float32), batch_size=16, shuffle=False)
 
-    return trainloader, trainshiftloader, testloader, testshiftloader
-
-
-
-
+    return trainloader, testloader
 
 def loss_function(x, x_hat, mu, logvar):
-    # Flatten the input and output for binary cross-entropy loss calculation
     x = x.view(-1, x.size(1) * x.size(2) * x.size(3) * x.size(4))
     x_hat = x_hat.view(-1, x_hat.size(1) * x_hat.size(2) * x_hat.size(3) * x_hat.size(4))
     
-    # MSE loss
     mse_loss = nn.MSELoss(reduction='mean')
     reproduction_loss = mse_loss(x_hat, x)
     
-    # KL divergence loss
     KLD = -0.5 * torch.sum(1 + logvar - mu.pow(2) - logvar.exp())
     
     return reproduction_loss + KLD
 
-def train(model, data_loader, data_shifted_loader, lr = 0.0001, criterion = loss_function,  t = 19, device = 'cpu', scheduler = 0):
+def train(model, data_loader, data_shifted_loader, lr=0.0001, criterion=loss_function, t=19, device='cpu', scheduler=0):
     optimizer = torch.optim.Adam(model.parameters(), lr=lr)
     model.train()
     train_loss = 0
@@ -102,17 +79,17 @@ def train(model, data_loader, data_shifted_loader, lr = 0.0001, criterion = loss
         X = X.to(device).view(-1,1,t,256,256)
         Y = Y.to(device).view(-1,1,t,256,256)
         optimizer.zero_grad()
-        a2, mu, logvar =model(X)
+        a2, mu, logvar = model(X)
         loss = criterion(Y, a2, mu, logvar)
         loss.backward()
-        train_loss += loss*X.size(0)
+        train_loss += loss * X.size(0)
         optimizer.step()
-        if scheduler !=0:
+        if scheduler != 0:
             scheduler.step()
     train_loss /= len(data_loader.dataset)
     return train_loss
 
-def validate(model, data_loader, data_shifted_loader, criterion = loss_function,  t = 19, device = 'cpu'):
+def validate(model, data_loader, data_shifted_loader, criterion=loss_function, t=19, device='cpu'):
     model.eval()
     valid_loss = 0
     with torch.no_grad():
@@ -121,7 +98,7 @@ def validate(model, data_loader, data_shifted_loader, criterion = loss_function,
             Y = Y.to(device).view(-1,1,t,256,256)
             a2, mu, logvar = model(X)
             loss = criterion(Y, a2, mu, logvar)
-            valid_loss += loss*X.size(0)
+            valid_loss += loss * X.size(0)
         
         valid_loss /= len(data_loader.dataset)
     return valid_loss
