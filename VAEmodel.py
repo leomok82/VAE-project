@@ -1,5 +1,6 @@
 import torch
 import torch.nn as nn
+from torchsummary import summary
 
 class VAE(nn.Module):
     def __init__(self, latent_dim = 64, channel_size = 9,latent_pixel_size = 16):
