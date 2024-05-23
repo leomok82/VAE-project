@@ -1,8 +1,7 @@
 import torch
 import torch.nn as nn
 
-
-
+__all__ = ['VAE']
 
 class VAE(nn.Module):
     def __init__(self, latent_dim=64, channel_size=19, image_size=256):

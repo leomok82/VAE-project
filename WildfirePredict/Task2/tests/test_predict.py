@@ -1,7 +1,7 @@
 import unittest
 import torch
 import numpy as np
-from utils.predict import predict_samples, display_samples
+import task2functions.predict as predict 
 
 class DummyModel:
     def decode(self, z):
@@ -17,12 +17,12 @@ class TestPredict(unittest.TestCase):
         self.channel_size = 1
 
     def test_predict_samples(self):
-        samples = predict_samples(self.model, self.n_samples, self.latent_dim, self.device)
+        samples = predict.predict_samples(self.model, self.n_samples, self.latent_dim, self.device)
         self.assertEqual(samples.shape, (self.n_samples, 1, 256, 256))
 
     def test_display_samples(self):
-        samples = predict_samples(self.model, self.n_samples, self.latent_dim, self.device)
-        display_samples(samples, self.channel_size)  # Check if it runs without error
+        samples = predict.predict_samples(self.model, self.n_samples, self.latent_dim, self.device)
+        predict.display_samples(samples, self.channel_size)  # Check if it runs without error
 
 if __name__ == '__main__':
     unittest.main()

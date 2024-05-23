@@ -2,11 +2,13 @@ import torch
 import numpy as np
 import matplotlib.pyplot as plt
 
+__all__ = ['encode_data', 'compute_covariance_matrix', 'is_ill_conditioned', 'regularize_covariance', 'compute_kalman_gain', 'mse']
+
 def encode_data(model, obs_data, generated_data, device):
     sensors_tensor = torch.tensor(obs_data, dtype=torch.float32).unsqueeze(1).to(device)
     generated_tensor = torch.tensor(generated_data, dtype=torch.float32).to(device)
 
-    model.eval()
+    # model.eval()
     with torch.no_grad():
         encoded_sensor_data = model.encoder(sensors_tensor)
         encoded_sensor_data = encoded_sensor_data.cpu().numpy()

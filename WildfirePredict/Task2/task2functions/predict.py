@@ -2,6 +2,8 @@ import numpy as np
 import torch
 import matplotlib.pyplot as plt
 
+__all__ = ['predict_samples', 'display_samples']    
+
 def predict_samples(model, n_samples, latent_dim, device='cpu'):
     with torch.no_grad():
         nums = torch.randn(n_samples, latent_dim).to(device)

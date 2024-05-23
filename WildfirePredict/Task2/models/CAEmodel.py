@@ -1,11 +1,13 @@
+import torch
 import torch.nn as nn
+
+__all__ = ['CAE']
 
 class CAE(nn.Module):
     def __init__(self):
         super().__init__()
         padding = 1
         output_padding =0
-
 
         self.encoder = nn.Sequential(
             nn.Conv2d(1, 8, kernel_size=5, stride=1, padding= 2),
