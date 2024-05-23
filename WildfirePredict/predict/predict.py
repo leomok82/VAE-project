@@ -37,6 +37,6 @@ class WildfirePredictor:
 
         # Convert predicted output to numpy array
         prediction = prediction.squeeze(0).squeeze(0).cpu().numpy()
-        prediction = (prediction >= 0.5).astype(np.float32)
+        prediction = (prediction >= 0.5).astype(np.int16)
 
         return prediction

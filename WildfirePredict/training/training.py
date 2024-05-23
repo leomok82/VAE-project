@@ -6,7 +6,7 @@ from torch.utils.data import DataLoader
 from tqdm import tqdm
 from livelossplot import PlotLosses
 
-from WildfirePredict.model import ConvLSTMModel
+from WildfirePredict.model.model import ConvLSTMModel
 
 class WildfireTrainer:
     def __init__(self, model, train_loader, val_loader, test_loader, device, criterion, optimizer, num_epochs=20):
@@ -89,39 +89,4 @@ class WildfireTrainer:
         test_loss /= len(self.test_loader.dataset)
         print(f"Test Loss: {test_loss:.4f}")
         return test_loss
-
-
-if __name__ == '__main__': 
-    train_dataset = None
-    val_dataset = None
-    test_dataset = None
-
-    # Assuming you have the following parameters
-    input_dim = 1
-    hidden_dim = [64, 64]
-    kernel_size = (3, 3)
-    num_layers = 2
-    output_dim = 1
-
-    # Create the model
-    model = ConvLSTMModel(input_dim, hidden_dim, kernel_size, num_layers, output_dim)
-
-    # Assuming you have train_loader, val_loader, and test_loader
-    train_loader = DataLoader(train_dataset, batch_size=32, shuffle=True)
-    val_loader = DataLoader(val_dataset, batch_size=32, shuffle=False)
-    test_loader = DataLoader(test_dataset, batch_size=32, shuffle=False)
-
-    # Set device, loss function, and optimizer
-    device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
-    criterion = nn.MSELoss()
-    optimizer = optim.Adam(model.parameters(), lr=0.001)
-
-    # Create the trainer
-    trainer = WildfireTrainer(model, train_loader, val_loader, test_loader, device, criterion, optimizer, num_epochs=20)
-
-    # Train the model
-    trainer.train()
-
-    # Test the model
-    trainer.test()
 
