@@ -33,6 +33,12 @@ jobs:
         echo "sys.path.append(os.path.join(notebook_dir, 'WildfirePredict'))" >> setup_path.py
         python setup_path.py
 
+    - name: Run flake8
+      run: |
+        flake8 WildfirePredict
+        flake8 WildfireDA
+        flake8 WildfireGenerate
+
     - name: Run tests
       run: |
         pytest WildfirePredict/tests

@@ -7,3 +7,4 @@ livelossplot
 pytest
 tqdm
 IPython
+flake8
