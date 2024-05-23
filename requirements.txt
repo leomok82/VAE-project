@@ -6,3 +6,4 @@ matplotlib
 livelossplot
 pytest
 tqdm
+IPython
