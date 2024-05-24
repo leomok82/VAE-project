@@ -5,6 +5,14 @@ import sys
 from WildfireThomas.WildfirePredict.dataset import WildfireDataset, split_dataset
 
 def test_dataset():
+    """
+    Test the WildfireDataset class.
+
+    This function tests the length and shape of the dataset created using the WildfireDataset class.
+
+    Returns:
+        None
+    """
     # Instantiate WildfireDataset
     data = np.random.rand(10, 100, 1, 64, 64)  # Assuming you have your data ready
     window_size = 5
@@ -18,6 +26,14 @@ def test_dataset():
     assert dataset[0][0].shape == (4, 1, 64, 64), "Shape of the first sequence is not as expected"
 
 def test_split_dataset():
+    """
+    Test the split_dataset function.
+
+    This function tests the size of the training and validation datasets created using the split_dataset function.
+
+    Returns:
+        None
+    """
     datasize = 10
     data = np.random.rand(datasize, 100, 1, 64, 64) 
     val_ratio = 0.2

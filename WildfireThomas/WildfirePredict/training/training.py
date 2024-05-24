@@ -9,6 +9,20 @@ from livelossplot import PlotLosses
 from WildfirePredict.model import ConvLSTMModel
 
 class WildfireTrainer:
+    """
+    A class for training a wildfire prediction model.
+
+    Args:
+        model (nn.Module): The wildfire prediction model.
+        train_loader (DataLoader): The data loader for the training dataset.
+        val_loader (DataLoader): The data loader for the validation dataset.
+        test_loader (DataLoader): The data loader for the test dataset.
+        device (str): The device to use for training (e.g., 'cuda', 'cpu').
+        criterion (nn.Module): The loss function for training.
+        optimizer (optim.Optimizer): The optimizer for training.
+        num_epochs (int, optional): The number of training epochs. Defaults to 20.
+    """
+
     def __init__(self, model, train_loader, val_loader, test_loader, device, criterion, optimizer, num_epochs=20):
         self.model = model
         self.train_loader = train_loader
@@ -23,6 +37,9 @@ class WildfireTrainer:
         self.liveplot = PlotLosses()
 
     def train(self):
+        """
+        Trains the wildfire prediction model.
+        """
         for epoch in range(self.num_epochs):
             self.model.train()
             train_loss = 0.0
@@ -52,6 +69,12 @@ class WildfireTrainer:
         print("Training complete")
 
     def validate(self):
+        """
+        Validates the wildfire prediction model.
+        
+        Returns:
+            float: The validation loss.
+        """
         self.model.eval()
         val_loss = 0.0
 
@@ -71,6 +94,12 @@ class WildfireTrainer:
         return val_loss
 
     def test(self):
+        """
+        Tests the wildfire prediction model.
+        
+        Returns:
+            float: The test loss.
+        """
         self.model.eval()
         test_loss = 0.0
 

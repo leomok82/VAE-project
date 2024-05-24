@@ -7,6 +7,15 @@ sys.path.append('WildfirPredict')
 from WildfireThomas.WildfirePredict.model import ConvLSTMModel, predict_image
 
 def test_model():
+    """
+    Test the ConvLSTMModel by checking the output shape.
+
+    This function creates an instance of the ConvLSTMModel, passes random data through the model,
+    and checks if the output shape matches the expected shape.
+
+    Returns:
+        None
+    """
     # Set device
     device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
 
@@ -25,6 +34,15 @@ def test_model():
 
 
 def test_predict():
+    """
+    Test the predict_image function by checking the output shape and data type.
+
+    This function creates an instance of the ConvLSTMModel, passes random data through the model using the predict_image function,
+    and checks if the output shape and data type match the expected values.
+
+    Returns:
+        None
+    """
     # Set device
     device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
 
