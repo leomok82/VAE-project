@@ -1,2 +1,2 @@
-from .ConvLSTM import *
-from .predict_image import *
+from .ConvLSTM import * # noqa
+from .predict_image import * # noqa

@@ -1,7 +1,5 @@
-import numpy as np
 import torch
 from torch.utils.data import DataLoader, Dataset
-import torch.nn.functional as F
 import torch.nn as nn
 
 __all__ = ['create_split', 'create_shifted_sequences', 'WildfiresObjective2',

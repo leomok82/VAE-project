@@ -1,1 +1,1 @@
-from .plot_sequences import *
+from .plot_sequences import * # noqa
