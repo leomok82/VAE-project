@@ -1,6 +1,7 @@
 import torch
 import numpy as np
 
+
 def predict_image(model, input_tensor):
     """
     Predicts the output image using the provided model and input tensor.

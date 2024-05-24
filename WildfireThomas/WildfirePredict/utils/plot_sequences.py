@@ -1,5 +1,6 @@
 import matplotlib.pyplot as plt
 
+
 def plot_sequences(input, target, prediction):
     """
     Plots the input sequence, target image, and predicted image.
@@ -31,7 +32,8 @@ def plot_sequences(input, target, prediction):
     plt.axis('off')
 
     # Plot predicted image
-    plt.subplot(2, input.shape[0] + 1, input.shape[0] * 2 + 2)  # Adjusted subplot position
+    plt.subplot(2, input.shape[0] + 1, input.shape[0]
+                * 2 + 2)  # Adjusted subplot position
     plt.imshow(prediction, cmap='gray')
     plt.title('Predicted Image')
     plt.axis('off')

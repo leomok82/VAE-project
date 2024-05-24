@@ -1,5 +1,5 @@
-from .training import * # noqa
-from .predict import * # noqa
+from .training import *  # noqa
+from .predict import *  # noqa
 
-from .feature_extraction import * # noqa
-from .scoring import * # noqa
+from .feature_extraction import *  # noqa
+from .scoring import *  # noqa

@@ -4,6 +4,7 @@ from sklearn.preprocessing import StandardScaler
 
 __all__ = ['extract_features', 'compute_pca']
 
+
 def extract_features(images1, images2, mse_func, cos_sim_func, psnr_func):
     """
     Extracts features from pairs of images.
@@ -26,6 +27,7 @@ def extract_features(images1, images2, mse_func, cos_sim_func, psnr_func):
             psnr_score = psnr_func(img1, img2)
             features.append([mse_score, 1 - cos_sim_score, 1 / psnr_score])
     return features
+
 
 def compute_pca(features):
     """

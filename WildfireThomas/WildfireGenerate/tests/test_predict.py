@@ -4,12 +4,14 @@ import numpy as np
 from WildfireThomas.WildfireGenerate.task2functions import predict
 from WildfireThomas.WildfireGenerate.models import VAE
 
+
 @pytest.fixture
 def model():
     """
     Fixture that returns an instance of the VAE model.
     """
     return VAE()
+
 
 @pytest.fixture
 def n_samples():
@@ -18,12 +20,14 @@ def n_samples():
     """
     return 10
 
+
 @pytest.fixture
 def latent_dim():
     """
     Fixture that returns the dimension of the latent space.
     """
     return 64
+
 
 @pytest.fixture
 def device():
@@ -32,12 +36,14 @@ def device():
     """
     return 'cpu'
 
+
 @pytest.fixture
 def channel_size():
     """
     Fixture that returns the number of channels in the input data.
     """
     return 19
+
 
 def test_predict_samples(model, n_samples, latent_dim, device):
     """
@@ -51,6 +57,7 @@ def test_predict_samples(model, n_samples, latent_dim, device):
     print(len(samples))
     assert samples.shape[0] == n_samples
 
+
 def test_display_samples(model, n_samples, latent_dim, device, channel_size):
     """
     Test case for the display_samples function.
@@ -60,4 +67,5 @@ def test_display_samples(model, n_samples, latent_dim, device, channel_size):
     samples = predict.predict_samples(model, n_samples, latent_dim, device)
     print(samples.shape)
     print(len(samples))
-    predict.display_samples(samples, channel_size)  # Check if it runs without error
+    # Check if it runs without error
+    predict.display_samples(samples, channel_size)

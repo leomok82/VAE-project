@@ -3,6 +3,7 @@ import numpy as np
 
 from WildfireThomas.WildfireGenerate.task2functions import training
 
+
 @pytest.fixture
 def setup_data():
     """
@@ -17,6 +18,7 @@ def setup_data():
     batch_size = 16
     device = 'cpu'
     return data, seq_length, split_size, batch_size, device
+
 
 def test_create_split(setup_data):
     """
@@ -35,6 +37,7 @@ def test_create_split(setup_data):
     expected_shape = (nb_seq, seq_length // split_size, dim, dim)
     assert data_4d.shape == expected_shape
 
+
 def test_create_shifted_sequences(setup_data):
     """
     Test function for the create_shifted_sequences function.
@@ -46,9 +49,11 @@ def test_create_shifted_sequences(setup_data):
         None
     """
     data, seq_length, split_size, _, _ = setup_data
-    input_seq, target_seq = training.create_shifted_sequences(data, seq_length, split_size)
+    input_seq, target_seq = training.create_shifted_sequences(
+        data, seq_length, split_size)
     assert input_seq.shape == target_seq.shape
     assert input_seq.shape[1] == seq_length // split_size - 1
+
 
 def test_WildfiresObjective2(setup_data):
     """
@@ -65,6 +70,7 @@ def test_WildfiresObjective2(setup_data):
     assert len(dataset) == len(dataset.input_seq)
     assert len(dataset) == len(dataset.target_seq)
 
+
 def test_create_dataloaders(setup_data):
     """
     Test function for the create_dataloaders function.
@@ -76,6 +82,7 @@ def test_create_dataloaders(setup_data):
         None
     """
     data, seq_length, split_size, batch_size, _ = setup_data
-    train_loader, train_shifted_loader, _, _ = training.create_dataloaders(data, data, seq_length, split_size, batch_size)
+    train_loader, train_shifted_loader, _, _ = training.create_dataloaders(
+        data, data, seq_length, split_size, batch_size)
     assert len(train_loader.dataset) == len(data) // (seq_length)
     assert len(train_loader) == len(train_shifted_loader)

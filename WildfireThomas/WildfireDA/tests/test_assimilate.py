@@ -4,12 +4,14 @@ import numpy as np
 from WildfireThomas.WildfireDA.task3functions import assimilate
 from WildfireThomas.WildfireDA.models import CAE
 
+
 @pytest.fixture
 def model():
     """
     Fixture that returns an instance of the CAE model.
     """
     return CAE()
+
 
 @pytest.fixture
 def obs_data():
@@ -18,6 +20,7 @@ def obs_data():
     """
     return np.random.rand(10, 5)
 
+
 @pytest.fixture
 def generated_data():
     """
@@ -25,12 +28,14 @@ def generated_data():
     """
     return np.random.rand(10, 5)
 
+
 @pytest.fixture
 def device():
     """
     Fixture that returns the device type.
     """
     return 'cpu'
+
 
 def test_compute_covariance_matrix():
     """
@@ -41,6 +46,7 @@ def test_compute_covariance_matrix():
     covariance_matrix = assimilate.compute_covariance_matrix(data)
     assert covariance_matrix.shape == (5, 5)
 
+
 def test_is_ill_conditioned():
     """
     Test case for the is_ill_conditioned function in the assimilate module.
@@ -48,6 +54,7 @@ def test_is_ill_conditioned():
     """
     matrix = np.random.rand(5, 5)
     assimilate.is_ill_conditioned(matrix)  # Just check if it runs
+
 
 def test_regularize_covariance():
     """
@@ -57,6 +64,7 @@ def test_regularize_covariance():
     matrix = np.random.rand(5, 5)
     regularized_matrix = assimilate.regularize_covariance(matrix)
     assert regularized_matrix.shape == matrix.shape
+
 
 def test_compute_kalman_gain():
     """
@@ -69,6 +77,7 @@ def test_compute_kalman_gain():
     K = assimilate.compute_kalman_gain(B, H, R)
     assert K.shape == B.shape
 
+
 def test_mse():
     """
     Test case for the mse function in the assimilate module.
@@ -78,6 +87,7 @@ def test_mse():
     y_pred = np.random.rand(10)
     error = assimilate.mse(y_obs, y_pred)
     assert isinstance(error, float)
+
 
 def test_update_state():
     """
@@ -91,6 +101,7 @@ def test_update_state():
     updated_x = assimilate.update_state(x, K, H, y)
     assert updated_x.shape == x.shape
 
+
 def test_run_assimilation():
     """
     Test case for the run_assimilation function in the assimilate module.
@@ -100,10 +111,12 @@ def test_run_assimilation():
     flat_model = np.random.rand(10, 5)
     latent_dim = 5
     encoded_shape = (10, 5)
-    updated_state = assimilate.run_assimilation(flat_sensor, flat_model, latent_dim, encoded_shape)
+    updated_state = assimilate.run_assimilation(
+        flat_sensor, flat_model, latent_dim, encoded_shape)
     assert updated_state.shape == encoded_shape
 
 # Tests for special values
+
 
 def test_compute_covariance_matrix_special_values():
     """
@@ -117,7 +130,9 @@ def test_compute_covariance_matrix_special_values():
         [9.0, 9.0, 9.0]
     ])
     computed_cov_matrix = assimilate.compute_covariance_matrix(X)
-    assert np.allclose(computed_cov_matrix, expected_cov_matrix), f"Expected: {expected_cov_matrix}, but got: {computed_cov_matrix}"
+    assert np.allclose(
+        computed_cov_matrix, expected_cov_matrix), f"Expected: {expected_cov_matrix}, but got: {computed_cov_matrix}"
+
 
 def test_is_ill_conditioned_special_values():
     """
@@ -128,6 +143,7 @@ def test_is_ill_conditioned_special_values():
     expected_cond_number = np.inf  # The matrix is singular or near singular
     cond_number = np.linalg.cond(matrix)
     assert cond_number > 1e15, f"Expected condition number to be greater than 1e15 for near-singular matrix, but got: {cond_number}"
+
 
 def test_update_state_special_values():
     """
@@ -140,7 +156,9 @@ def test_update_state_special_values():
     y = np.array([3, 4], dtype=float)
     expected_updated_state = x + np.dot(K, (y - np.dot(H, x)))
     computed_updated_state = assimilate.update_state(x, K, H, y)
-    assert np.allclose(computed_updated_state, expected_updated_state), f"Expected: {expected_updated_state}, but got: {computed_updated_state}"
+    assert np.allclose(computed_updated_state,
+                       expected_updated_state), f"Expected: {expected_updated_state}, but got: {computed_updated_state}"
+
 
 def test_compute_kalman_gain_special_values():
     """
@@ -155,7 +173,9 @@ def test_compute_kalman_gain_special_values():
         [0, 0.90909091]
     ])
     computed_kalman_gain = assimilate.compute_kalman_gain(B, H, R)
-    assert np.allclose(computed_kalman_gain, expected_kalman_gain), f"Expected: {expected_kalman_gain}, but got: {computed_kalman_gain}"
+    assert np.allclose(computed_kalman_gain,
+                       expected_kalman_gain), f"Expected: {expected_kalman_gain}, but got: {computed_kalman_gain}"
+
 
 def test_regularize_covariance_special_values():
     """
@@ -168,8 +188,11 @@ def test_regularize_covariance_special_values():
         [1.1, 0],
         [0, 1.1]
     ])
-    computed_regularized_matrix = assimilate.regularize_covariance(matrix, epsilon)
-    assert np.allclose(computed_regularized_matrix, expected_regularized_matrix), f"Expected: {expected_regularized_matrix}, but got: {computed_regularized_matrix}"
+    computed_regularized_matrix = assimilate.regularize_covariance(
+        matrix, epsilon)
+    assert np.allclose(computed_regularized_matrix,
+                       expected_regularized_matrix), f"Expected: {expected_regularized_matrix}, but got: {computed_regularized_matrix}"
+
 
 def test_mse_special_values():
     """
@@ -180,4 +203,5 @@ def test_mse_special_values():
     y_pred = np.array([1.1, 2.1, 3.1], dtype=float)
     expected_mse = 0.01
     computed_mse = assimilate.mse(y_obs, y_pred)
-    assert np.isclose(computed_mse, expected_mse), f"Expected: {expected_mse}, but got: {computed_mse}"
+    assert np.isclose(
+        computed_mse, expected_mse), f"Expected: {expected_mse}, but got: {computed_mse}"

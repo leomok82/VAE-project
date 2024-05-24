@@ -2,7 +2,9 @@ import torch
 import numpy as np
 import matplotlib.pyplot as plt
 
-__all__ = ['compute_covariance_matrix', 'is_ill_conditioned', 'regularize_covariance', 'compute_kalman_gain', 'mse']
+__all__ = ['compute_covariance_matrix', 'is_ill_conditioned',
+           'regularize_covariance', 'compute_kalman_gain', 'mse']
+
 
 def compute_covariance_matrix(X):
     """
@@ -16,9 +18,11 @@ def compute_covariance_matrix(X):
     """
     means = np.mean(X, axis=0)
     centered_data = X - means
-    covariance_matrix = np.dot(centered_data.T, centered_data) / (X.shape[0] - 1)
+    covariance_matrix = np.dot(
+        centered_data.T, centered_data) / (X.shape[0] - 1)
 
     return covariance_matrix
+
 
 def is_ill_conditioned(matrix):
     """
@@ -33,6 +37,7 @@ def is_ill_conditioned(matrix):
     cond_number = np.linalg.cond(matrix)
     print(f"Condition number: {cond_number}")
 
+
 def regularize_covariance(matrix, epsilon=100):
     """
     Regularize the covariance matrix by adding a value to the diagonal elements.
@@ -46,6 +51,7 @@ def regularize_covariance(matrix, epsilon=100):
     """
     regularized_matrix = matrix + epsilon * np.identity(matrix.shape[0])
     return regularized_matrix
+
 
 def compute_kalman_gain(B, H, R):
     """
@@ -63,6 +69,7 @@ def compute_kalman_gain(B, H, R):
     K = np.dot(B, np.dot(H.T, temp_inv))
     return K
 
+
 def mse(y_obs, y_pred):
     """
     Compute the mean squared error between the observed and predicted values.
@@ -75,6 +82,7 @@ def mse(y_obs, y_pred):
         float: Mean squared error.
     """
     return np.square(np.subtract(y_obs, y_pred)).mean()
+
 
 def update_state(x, K, H, y):
     """
@@ -90,6 +98,7 @@ def update_state(x, K, H, y):
         numpy.ndarray: Updated state.
     """
     return x + np.dot(K, (y - np.dot(H, x)))
+
 
 def run_assimilation(flat_sensor, flat_model, latent_dim, encoded_shape, R_coeficient=0.001, epsilon=100):
     """
@@ -121,6 +130,7 @@ def run_assimilation(flat_sensor, flat_model, latent_dim, encoded_shape, R_coefi
     updated_state = updated_state_flattened.T.reshape(encoded_shape)
 
     return updated_state
+
 
 def visualise(sensor, generated_before, generated_after):
     """

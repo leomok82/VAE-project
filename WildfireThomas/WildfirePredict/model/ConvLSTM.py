@@ -1,6 +1,7 @@
 import torch
 import torch.nn as nn
 
+
 class ConvLSTMCell(nn.Module):
     """
     Convolutional LSTM cell implementation.
@@ -52,10 +53,12 @@ class ConvLSTMCell(nn.Module):
         """
         h_cur, c_cur = cur_state
 
-        combined = torch.cat([input_tensor, h_cur], dim=1)  # concatenate along channel axis
+        # concatenate along channel axis
+        combined = torch.cat([input_tensor, h_cur], dim=1)
 
         combined_conv = self.conv(combined)
-        cc_i, cc_f, cc_o, cc_g = torch.split(combined_conv, self.hidden_dim, dim=1)
+        cc_i, cc_f, cc_o, cc_g = torch.split(
+            combined_conv, self.hidden_dim, dim=1)
         i = torch.sigmoid(cc_i)
         f = torch.sigmoid(cc_f)
         o = torch.sigmoid(cc_o)
@@ -81,6 +84,7 @@ class ConvLSTMCell(nn.Module):
         height, width = image_size
         return (torch.zeros(batch_size, self.hidden_dim, height, width, device=self.conv.weight.device),
                 torch.zeros(batch_size, self.hidden_dim, height, width, device=self.conv.weight.device))
+
 
 class ConvLSTM(nn.Module):
     """
@@ -198,7 +202,8 @@ class ConvLSTM(nn.Module):
         """
         init_states = []
         for i in range(self.num_layers):
-            init_states.append(self.cell_list[i].init_hidden(batch_size, image_size))
+            init_states.append(
+                self.cell_list[i].init_hidden(batch_size, image_size))
         return init_states
 
     @staticmethod
@@ -234,6 +239,7 @@ class ConvLSTM(nn.Module):
             param = [param] * num_layers
         return param
 
+
 class ConvLSTMModel(nn.Module):
     """
     Convolutional LSTM model implementation.
@@ -253,8 +259,10 @@ class ConvLSTMModel(nn.Module):
 
     def __init__(self, input_dim=1, hidden_dim=[32, 32], kernel_size=(3, 3), num_layers=2, output_dim=1):
         super(ConvLSTMModel, self).__init__()
-        self.convlstm = ConvLSTM(input_dim, hidden_dim, kernel_size, num_layers, batch_first=True, return_all_layers=False)
-        self.conv = nn.Conv2d(hidden_dim[-1], output_dim, kernel_size=1, padding=0)
+        self.convlstm = ConvLSTM(input_dim, hidden_dim, kernel_size,
+                                 num_layers, batch_first=True, return_all_layers=False)
+        self.conv = nn.Conv2d(
+            hidden_dim[-1], output_dim, kernel_size=1, padding=0)
 
     def forward(self, x):
         """

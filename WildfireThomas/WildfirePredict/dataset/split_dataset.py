@@ -1,6 +1,7 @@
 import torch
 from torch.utils.data import random_split
 
+
 def split_dataset(dataset, val_ratio=0.2, seed=None):
     """
     Splits a dataset into training and validation sets.
@@ -15,13 +16,13 @@ def split_dataset(dataset, val_ratio=0.2, seed=None):
     """
     if seed is not None:
         torch.manual_seed(seed)
-    
+
     total_size = len(dataset)
     val_size = int(val_ratio * total_size)
     train_size = total_size - val_size
-    
+
     train_dataset, val_dataset = random_split(dataset, [train_size, val_size])
-    
+
     return train_dataset, val_dataset
 
 # Example usage:

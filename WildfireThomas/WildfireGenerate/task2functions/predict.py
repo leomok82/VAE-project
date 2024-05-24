@@ -2,7 +2,8 @@ import numpy as np
 import torch
 import matplotlib.pyplot as plt
 
-__all__ = ['predict_samples', 'display_samples']    
+__all__ = ['predict_samples', 'display_samples']
+
 
 def predict_samples(model, n_samples, latent_dim, device='cpu'):
     """
@@ -21,6 +22,7 @@ def predict_samples(model, n_samples, latent_dim, device='cpu'):
         nums = torch.randn(n_samples, latent_dim).to(device)
         samples = model.decoder(nums).cpu().detach().numpy()
     return samples
+
 
 def display_samples(samples, channel_size, n_rows=9, n_cols=1):
     """

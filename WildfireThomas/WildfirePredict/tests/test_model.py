@@ -1,10 +1,10 @@
+from WildfireThomas.WildfirePredict.model import ConvLSTMModel, predict_image
 import numpy as np
 import torch
 
 import sys
 sys.path.append('WildfirPredict')
 
-from WildfireThomas.WildfirePredict.model import ConvLSTMModel, predict_image
 
 def test_model():
     """
@@ -53,7 +53,8 @@ def test_predict():
     output = predict_image(model, torch.tensor(data).to(device))
 
     # Assert the output shape and data type
-    assert output.shape == (64, 64), f"Output shape is {output.shape}, expected (64, 64)"
+    assert output.shape == (
+        64, 64), f"Output shape is {output.shape}, expected (64, 64)"
     assert output.dtype == np.int16, f"Output data type is {output.dtype}, expected torch.int"
 
     print(f"Output shape is {output.shape} and data type is {output.dtype}")

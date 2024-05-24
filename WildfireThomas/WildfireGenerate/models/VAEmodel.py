@@ -3,6 +3,7 @@ import torch.nn as nn
 
 __all__ = ['VAE']
 
+
 class VAE(nn.Module):
     """
     Variational Autoencoder (VAE) model.
