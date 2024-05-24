@@ -23,13 +23,10 @@ jobs:
       run: |
         python -m pip install --upgrade pip
         pip install -r requirements.txt
-        pip3 install torch --index-url https://download.pytorch.org/whl/cpu
 
     - name: Run flake8
       run: |
-        flake8 WildfirePredict
-        flake8 WildfireGenerate
-        flake8 WildfireDA
+        flake8 WildfireThomas
 
     - name: Run tests
       run: |

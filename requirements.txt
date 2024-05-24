@@ -2,7 +2,7 @@ numpy
 scikit-learn
 scikit-image
 matplotlib
-# pytorch
+torch
 torchsummary
 livelossplot
 pytest
