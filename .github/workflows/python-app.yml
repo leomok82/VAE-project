@@ -26,7 +26,7 @@ jobs:
 
     - name: Run flake8
       run: |
-        flake8 WildfireThomas || true
+        flake8 WildfireThomas
 
     - name: Run tests
       run: |
