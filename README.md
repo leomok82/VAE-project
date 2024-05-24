@@ -1,4 +1,3 @@
-Sure, here's how you can outline the process in the README file:
 
 ---
 
