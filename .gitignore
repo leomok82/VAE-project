@@ -76,11 +76,20 @@ docs/_build/
 target/
 
 # Jupyter Notebook
-.ipynb_checkpoints
+.ipynb_checkpoints 
 
 # IPython
 profile_default/
 ipython_config.py
+
+# Data and Model
+*.zip
+*.pth
+*.png
+*.npy
+*.bat
+Makefile
+
 
 # pyenv
 #   For a library or package, you might want to ignore these files since the code is

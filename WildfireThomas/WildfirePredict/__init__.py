@@ -1,0 +1,1 @@
+# WildfirePredict/__init__.py # noqa
