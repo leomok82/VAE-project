@@ -1,9 +1,7 @@
 import pytest
 import numpy as np
-import sys
 
-sys.path.append('WildfireGenerate')
-from task2functions import training
+from WildfireThomas.WildfireGenerate.task2functions import training
 
 # Train dataset shape: torch.Size([125, 19, 256, 256])
 @pytest.fixture

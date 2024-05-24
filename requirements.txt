@@ -3,6 +3,7 @@ scikit-learn
 scikit-image
 matplotlib
 # pytorch
+torchsummary
 livelossplot
 pytest
 tqdm

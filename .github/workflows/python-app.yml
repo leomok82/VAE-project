@@ -25,22 +25,12 @@ jobs:
         pip install -r requirements.txt
         pip3 install torch --index-url https://download.pytorch.org/whl/cpu
 
-    - name: Set up PYTHONPATH
-      run: |
-        echo "import sys" > setup_path.py
-        echo "import os" >> setup_path.py
-        echo "notebook_dir = os.path.abspath('')" >> setup_path.py
-        echo "sys.path.append(os.path.join(notebook_dir, 'WildfirePredict'))" >> setup_path.py
-        python setup_path.py
-
     - name: Run flake8
       run: |
         flake8 WildfirePredict
-        flake8 WildfireDA
         flake8 WildfireGenerate
+        flake8 WildfireDA
 
     - name: Run tests
       run: |
-        pytest WildfirePredict/tests
-        pytest WildfireGenerate/tests
-        pytest WildfireDA/tests
+        pytest WildfireThomas

@@ -1,11 +1,8 @@
 import pytest
 import numpy as np
-import sys
-# Set the path to the parent directory to import the modules
-sys.path.append('WildfireDA')
 
-from task3functions import assimilate
-from models import CAE
+from WildfireThomas.WildfireDA.task3functions import assimilate
+from WildfireThomas.WildfireDA.models import CAE
 
 @pytest.fixture
 def model():

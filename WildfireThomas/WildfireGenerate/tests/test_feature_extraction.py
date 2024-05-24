@@ -1,9 +1,7 @@
 import pytest
 import numpy as np
-import sys
 
-sys.path.append('WildfireGenerate')
-from task2functions import feature_extraction, scoring
+from WildfireThomas.WildfireGenerate.task2functions import feature_extraction, scoring
 
 @pytest.fixture
 def images():

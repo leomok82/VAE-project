@@ -1,11 +1,8 @@
- 
 import pytest
 import numpy as np
-import sys
 
-sys.path.append('WildfireGenerate')
-from task2functions import predict
-from models import VAE
+from WildfireThomas.WildfireGenerate.task2functions import predict
+from WildfireThomas.WildfireGenerate.models import VAE
 
 @pytest.fixture
 def model():

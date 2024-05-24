@@ -1,1 +1,0 @@
-# WildfireGenerate/__init__.py

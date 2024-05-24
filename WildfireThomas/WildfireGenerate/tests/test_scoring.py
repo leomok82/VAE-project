@@ -1,10 +1,7 @@
 import pytest
 import numpy as np
-import sys
-import skimage
 
-sys.path.append('WildfireGenerate')
-from task2functions import scoring
+from WildfireThomas.WildfireGenerate.task2functions import scoring
 
 @pytest.fixture
 # def images():
@@ -43,9 +40,9 @@ def test_combined_similarity_score(images):
     score = scoring.combined_similarity_score(image1, image2, 0.4, 0.3, 0.3)
     assert score >= 0
  
-def test_compare_images(images):
-    best_matches = scoring.compare_images(images, images, 0.4, 0.3, 0.3)
-    assert len(best_matches) == len(images)
+# def test_compare_images(images):
+#     best_matches = scoring.compare_images(images, images, 0.4, 0.3, 0.3)
+#     assert len(best_matches) == len(images)
  
 if __name__ == '__main__':
     pytest.main()

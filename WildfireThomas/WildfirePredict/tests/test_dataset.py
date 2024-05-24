@@ -1,6 +1,8 @@
 # test_dataset.py
 import numpy as np
-from WildfirePredict.dataset import WildfireDataset, split_dataset
+import sys
+
+from WildfireThomas.WildfirePredict.dataset import WildfireDataset, split_dataset
 
 def test_dataset():
     # Instantiate WildfireDataset

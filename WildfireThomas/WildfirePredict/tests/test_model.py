@@ -1,6 +1,10 @@
 import numpy as np
 import torch
-from WildfirePredict.model import ConvLSTMModel, predict_image
+
+import sys
+sys.path.append('WildfirPredict')
+
+from WildfireThomas.WildfirePredict.model import ConvLSTMModel, predict_image
 
 def test_model():
     # Set device
