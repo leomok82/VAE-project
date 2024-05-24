@@ -166,8 +166,7 @@ There are 2 ways in which you can download the data:
 
   **First way** Run the first block in the `task1_handbook.ipynb`, manually create a folder named `data` and include everyhting in that folder.
 
-  **Second way** Click on this google drive link and download the data file.
-   
+  **Second way** Click on this [google drive link](https://drive.google.com/file/d/1teISZeeps7Mbv-KRQ54kuIx-KdD0yuMe/view?usp=drive_link)
 ----
 
 ## 🚧Development Status🚧
