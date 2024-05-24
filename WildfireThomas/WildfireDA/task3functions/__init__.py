@@ -1,1 +1,1 @@
-from .assimilate import * # noqa
+from .assimilate import *  # noqa

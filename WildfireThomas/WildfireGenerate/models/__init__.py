@@ -1,1 +1,1 @@
-from .VAEmodel import VAE
+from .VAEmodel import VAE # noqa

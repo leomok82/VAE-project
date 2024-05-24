@@ -1,15 +1,17 @@
 import torch
 import numpy as np
 
+
 def predict_image(model, input_tensor):
     """
     Predicts the output image using the provided model and input tensor.
 
     Args:
-        input_tensor: The input tensor containing the first four images.
+        model (torch.nn.Module): The trained model used for prediction.
+        input_tensor (torch.Tensor): The input tensor containing the first four images.
 
     Returns:
-        prediction: The predicted output image.
+        prediction (np.ndarray): The predicted output image as a numpy array.
     """
     # Ensure the model is in evaluation mode
     model.eval()

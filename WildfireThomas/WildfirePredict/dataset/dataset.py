@@ -1,10 +1,12 @@
 import numpy as np
-import torch
 from torch.utils.data import Dataset
+
 
 class WildfireDataset(Dataset):
     def __init__(self, data, window_size=5, step_size=5):
         """
+        Initialize the WildfireDataset.
+
         Args:
             data (numpy.ndarray): Input dataset with shape (num_sequences, seq_length, 1, height, width).
             window_size (int): Length of the window for each input sequence.
@@ -42,9 +44,24 @@ class WildfireDataset(Dataset):
                     self.labels.append(y)
 
     def __len__(self):
+        """
+        Get the length of the dataset.
+
+        Returns:
+            int: The number of sequences in the dataset.
+        """
         return len(self.sequences)
 
     def __getitem__(self, idx):
+        """
+        Get a specific sequence and its corresponding label.
+
+        Args:
+            idx (int): Index of the sequence.
+
+        Returns:
+            tuple: A tuple containing the sequence and its corresponding label.
+        """
         x = self.sequences[idx]
         y = self.labels[idx]
         return x, y

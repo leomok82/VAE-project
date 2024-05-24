@@ -1,1 +1,1 @@
-from .CAEmodel import CAE
+from .CAEmodel import CAE # noqa

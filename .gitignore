@@ -87,6 +87,8 @@ ipython_config.py
 *.pth
 *.png
 *.npy
+*.bat
+Makefile
 
 
 # pyenv
