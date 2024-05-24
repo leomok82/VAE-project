@@ -4,20 +4,24 @@ import numpy as np
 from WildfireThomas.WildfireGenerate.task2functions import scoring
 
 @pytest.fixture
-# def images():
-#     # Generate two noisy images
-#     image_shape = (256, 256)  # Define image shape
-
-#     # Generate noisy images
-#     image1 = skimage.img_as_float(np.random.normal(0, 10, image_shape))
-#     image2 = skimage.img_as_float(np.random.normal(0, 10, image_shape))
-#     images = [image1, image2]
-#     return images
 
 def images():
     image1 = np.array([[1, 2], [3, 4]])
     image2 = np.array([[4, 3], [2, 1]])
     return image1, image2
+
+@pytest.fixture
+def simple_image_sets():
+    generated_images = [
+        np.array([[1, 2], [3, 4]]),
+        np.array([[5, 6], [7, 8]]),
+        np.array([[9, 10], [11, 12]])
+    ]
+    observed_images = [
+        np.array([[1, 2], [3, 4]]),
+        np.array([[5, 6], [7, 8]])
+    ]
+    return generated_images, observed_images
  
 def test_mse(images):
     image1, image2 = images
@@ -40,10 +44,14 @@ def test_combined_similarity_score(images):
     score = scoring.combined_similarity_score(image1, image2, 0.4, 0.3, 0.3)
     assert score >= 0
  
-# def test_compare_images(images):
-#     best_matches = scoring.compare_images(images, images, 0.4, 0.3, 0.3)
-#     assert len(best_matches) == len(images)
- 
+def test_compare_images(simple_image_sets):
+    generated_images, observed_images = simple_image_sets
+    best_matches = scoring.compare_images(generated_images, observed_images, 0.48, 0.04, 0.48)
+    assert len(best_matches) == len(observed_images)
+    for idx, score in best_matches:
+        assert idx >= 0
+        assert score >= 0
+
 if __name__ == '__main__':
     pytest.main()
  
