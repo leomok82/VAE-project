@@ -190,12 +190,3 @@ Distributed under the Apache License. See `license.md` for more information.
 
 ---
 
-## Contact
-Mok, Leo - leo.mok23@imperial.ac.uk
-Guo, Ruida - ruida.guo23@imperial.ac.uk
-Veiras Yanes, Jorge - jorge.veiras-yanes23@imperial.ac.uk
-Lakatos, Sara - sara.lakatos23@imperial.ac.uk
-YU, Chenyang - chenyang.yu23@imperial.ac.uk
-Li, Wenxin - wenxin.li23@imperial.ac.uk
-Li, CHUHAN - li.li23@imperial.ac.uk
-Chadda, Iona Y - iona.chadda23@imperial.ac.uk
